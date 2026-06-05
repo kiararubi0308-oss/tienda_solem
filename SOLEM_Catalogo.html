@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SOLEM · Calzado</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --cr:#0A0604;
+  --cs:#141008;
+  --cb:#1C160D;
+  --gold:#C4832A;
+  --gold2:#E5A84D;
+  --gold3:#F0C878;
+  --ivory:#F5EDD8;
+  --ivory2:#FAF4E8;
+  --muted:#8B7355;
+  --light:#D4C4A0;
+  --white:#FDFAF4;
+  --red:#8B2020;
+  --green:#1A5C30;
+  --shadow:0 8px 40px rgba(0,0,0,.5);
+  --r:12px;
+  --font-head:'Cormorant Garamond',serif;
+  --font-body:'Outfit',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-body);background:var(--cr);color:var(--ivory);font-size:15px;line-height:1.6;overflow-x:hidden}
+::selection{background:var(--gold);color:#000}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--cs)}::-webkit-scrollbar-thumb{background:var(--gold);border-radius:2px}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:30px;right:30px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast-item{background:var(--cb);border:1px solid var(--gold);color:var(--ivory);padding:12px 20px;border-radius:8px;font-size:13px;font-family:var(--font-body);animation:toastIn .3s ease;box-shadow:var(--shadow);max-width:280px}
+.toast-item.ok{border-color:#2D8A50}
+.toast-item.err{border-color:var(--red)}
+@keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── MODAL ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s}
+.modal{background:var(--cb);border:1px solid rgba(196,131,42,.3);border-radius:16px;padding:28px;width:min(96vw,520px);max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.8)}
+.modal-title{font-family:var(--font-head);font-size:22px;color:var(--gold);margin-bottom:20px;display:flex;justify-content:space-between;align-items:center}
+.modal-close{background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;line-height:1;padding:0 4px;transition:color .2s}.modal-close:hover{color:var(--ivory)}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* ── FORM ── */
+.fg{margin-bottom:14px}
+.fl{display:block;font-size:12px;color:var(--light);margin-bottom:5px;font-weight:500;letter-spacing:.5px;text-transform:uppercase}
+.fi{width:100%;padding:10px 14px;border-radius:8px;border:1px solid rgba(196,131,42,.25);background:rgba(255,255,255,.04);color:var(--ivory);font-family:var(--font-body);font-size:14px;transition:border .2s}
+.fi:focus{outline:none;border-color:var(--gold);background:rgba(196,131,42,.06)}
+select.fi option{background:var(--cb);color:var(--ivory)}
+textarea.fi{resize:vertical;min-height:80px}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn-row{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+
+/* ── BUTTONS ── */
+.btn{padding:10px 22px;border-radius:8px;border:none;font-family:var(--font-body);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px;letter-spacing:.3px}
+.btn:hover{transform:translateY(-2px)}
+.btn-gold{background:var(--gold);color:#000}.btn-gold:hover{background:var(--gold2)}
+.btn-out{background:transparent;color:var(--gold);border:1px solid rgba(196,131,42,.5)}.btn-out:hover{border-color:var(--gold);background:rgba(196,131,42,.08)}
+.btn-red{background:var(--red);color:#fff}.btn-red:hover{background:#a32828}
+.btn-sm{padding:7px 14px;font-size:12px}
+.btn-icon{background:transparent;border:1px solid rgba(196,131,42,.25);color:var(--light);padding:6px 10px;border-radius:6px;font-size:13px;cursor:pointer;transition:all .2s}.btn-icon:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ── NAVBAR ── */
+#navbar{position:fixed;top:0;left:0;right:0;z-index:500;background:rgba(10,6,4,.9);backdrop-filter:blur(12px);border-bottom:1px solid rgba(196,131,42,.15);height:64px;display:flex;align-items:center;transition:all .3s}
+.nav-inner{max-width:1240px;margin:0 auto;width:100%;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{display:flex;align-items:center;gap:10px;cursor:pointer}
+.nav-logo-icon{width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:700;font-size:18px;color:#000}
+.nav-brand{font-family:var(--font-head);font-size:22px;font-weight:700;color:var(--ivory);letter-spacing:2px}
+.nav-links{display:flex;gap:6px}
+.nav-link{background:none;border:none;color:var(--light);font-family:var(--font-body);font-size:13px;cursor:pointer;padding:7px 14px;border-radius:7px;transition:all .2s;letter-spacing:.3px}
+.nav-link:hover,.nav-link.active{color:var(--gold);background:rgba(196,131,42,.1)}
+.nav-admin{background:rgba(196,131,42,.15);border:1px solid rgba(196,131,42,.3);color:var(--gold);font-size:12px;font-family:var(--font-body);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s}
+.nav-admin:hover{background:rgba(196,131,42,.25)}
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px}
+.hamburger span{display:block;width:22px;height:2px;background:var(--ivory);border-radius:2px;transition:all .3s}
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(10,6,4,.97);backdrop-filter:blur(16px);padding:16px;z-index:499;border-bottom:1px solid rgba(196,131,42,.2);flex-direction:column;gap:4px}
+.mobile-menu.open{display:flex}
+.mobile-link{background:none;border:none;color:var(--light);font-family:var(--font-body);font-size:15px;cursor:pointer;padding:12px 16px;border-radius:8px;text-align:left;width:100%;transition:all .2s}
+.mobile-link:hover{color:var(--gold);background:rgba(196,131,42,.08)}
+
+/* ── SECTIONS ── */
+section{padding:80px 0}
+.section-inner{max-width:1240px;margin:0 auto;padding:0 24px}
+.section-tag{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;font-weight:600}
+.section-title{font-family:var(--font-head);font-size:clamp(32px,5vw,54px);color:var(--ivory);line-height:1.1;margin-bottom:16px}
+.section-sub{color:var(--light);font-size:16px;max-width:560px;line-height:1.7}
+.divider{width:48px;height:2px;background:var(--gold);margin:20px 0}
+
+/* ── HERO ── */
+#hero{min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden;padding-top:64px}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 70% 40%,rgba(196,131,42,.12) 0%,transparent 65%),linear-gradient(160deg,var(--cr) 0%,var(--cs) 50%,#0D0A05 100%)}
+.hero-pattern{position:absolute;inset:0;opacity:.04;background-image:repeating-linear-gradient(45deg,var(--gold) 0,var(--gold) 1px,transparent 0,transparent 50%);background-size:20px 20px}
+.hero-content{position:relative;z-index:2;max-width:1240px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.hero-tag{font-size:11px;letter-spacing:4px;color:var(--gold);text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.hero-tag::before{content:'';display:inline-block;width:30px;height:1px;background:var(--gold)}
+.hero-title{font-family:var(--font-head);font-size:clamp(42px,6vw,80px);line-height:1;color:var(--ivory);margin-bottom:12px}
+.hero-title em{color:var(--gold);font-style:italic}
+.hero-slogan{font-size:clamp(14px,2vw,17px);color:var(--light);margin-bottom:36px;line-height:1.7;max-width:480px}
+.hero-cta{display:flex;gap:14px;flex-wrap:wrap}
+.hero-img-wrap{position:relative}
+.hero-img-frame{border-radius:20px;overflow:hidden;aspect-ratio:4/5;position:relative;background:var(--cb);border:1px solid rgba(196,131,42,.2);cursor:pointer}
+.hero-img-frame img{width:100%;height:100%;object-fit:cover;display:block}
+.hero-img-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--muted);font-size:14px}
+.hero-img-placeholder span{font-size:56px}
+.hero-corner{position:absolute;bottom:-20px;left:-20px;width:100px;height:100px;border-left:2px solid var(--gold);border-bottom:2px solid var(--gold);border-radius:0 0 0 12px;opacity:.4}
+.hero-stats{display:flex;gap:30px;margin-top:40px;padding-top:30px;border-top:1px solid rgba(196,131,42,.2)}
+.hstat-v{font-family:var(--font-head);font-size:30px;color:var(--gold);font-weight:700}
+.hstat-l{font-size:11px;color:var(--muted);margin-top:2px;letter-spacing:.5px}
+.edit-overlay{position:absolute;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s;border-radius:20px;cursor:pointer}
+.edit-overlay:hover{opacity:1}
+.edit-overlay span{background:rgba(196,131,42,.9);color:#000;padding:8px 18px;border-radius:6px;font-size:13px;font-weight:600}
+
+/* ── NOSOTROS ── */
+#nosotros{background:var(--cs)}
+.nosotros-grid{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:start}
+.nosotros-card{background:var(--cb);border:1px solid rgba(196,131,42,.2);border-radius:14px;padding:24px 28px;margin-bottom:16px;cursor:pointer;transition:border .3s,transform .3s}
+.nosotros-card:hover{border-color:rgba(196,131,42,.5);transform:translateY(-3px)}
+.nc-icon{font-size:28px;margin-bottom:10px}
+.nc-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;font-weight:600}
+.nc-text{color:var(--light);font-size:14px;line-height:1.8}
+.historia-block{background:linear-gradient(135deg,rgba(196,131,42,.08),rgba(196,131,42,.02));border:1px solid rgba(196,131,42,.2);border-radius:14px;padding:28px;cursor:pointer;transition:border .3s}
+.historia-block:hover{border-color:rgba(196,131,42,.5)}
+.historia-quote{font-family:var(--font-head);font-size:48px;color:rgba(196,131,42,.2);line-height:1}
+.historia-text{font-size:15px;color:var(--light);line-height:1.9;font-style:italic}
+
+/* ── CATÁLOGO ── */
+#catalogo{background:var(--cr)}
+.cat-toolbar{display:flex;gap:12px;margin-bottom:30px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.cat-search{position:relative;flex:1;min-width:200px;max-width:340px}
+.cat-search input{width:100%;padding:10px 14px 10px 40px;border-radius:8px;border:1px solid rgba(196,131,42,.25);background:var(--cb);color:var(--ivory);font-family:var(--font-body);font-size:14px;transition:border .2s}
+.cat-search input:focus{outline:none;border-color:var(--gold)}
+.cat-search::before{content:'🔍';position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none}
+.cat-filters{display:flex;gap:8px;flex-wrap:wrap}
+.filter-btn{background:transparent;border:1px solid rgba(196,131,42,.25);color:var(--light);font-family:var(--font-body);font-size:12px;padding:7px 16px;border-radius:20px;cursor:pointer;transition:all .2s}
+.filter-btn:hover,.filter-btn.active{background:var(--gold);color:#000;border-color:var(--gold)}
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:20px}
+.prod-card{background:var(--cb);border:1px solid rgba(196,131,42,.15);border-radius:14px;overflow:hidden;transition:all .3s;cursor:pointer}
+.prod-card:hover{border-color:rgba(196,131,42,.5);transform:translateY(-5px);box-shadow:0 16px 50px rgba(0,0,0,.5)}
+.prod-img{aspect-ratio:4/3;position:relative;background:var(--cs);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.prod-img img{width:100%;height:100%;object-fit:cover}
+.prod-img-placeholder{font-size:48px;color:var(--muted)}
+.prod-badge{position:absolute;top:12px;left:12px;background:var(--gold);color:#000;font-size:10px;font-weight:700;padding:3px 10px;border-radius:12px;letter-spacing:.5px}
+.prod-badge.inactive{background:var(--muted)}
+.prod-actions{position:absolute;top:10px;right:10px;display:flex;gap:6px;opacity:0;transition:opacity .3s}
+.prod-card:hover .prod-actions{opacity:1}
+.prod-body{padding:18px}
+.prod-cat{font-size:10px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:6px;font-weight:600}
+.prod-name{font-family:var(--font-head);font-size:20px;color:var(--ivory);margin-bottom:4px}
+.prod-desc{font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.prod-footer{display:flex;justify-content:space-between;align-items:center}
+.prod-price{font-family:var(--font-head);font-size:22px;color:var(--gold);font-weight:600}
+.prod-code{font-size:10px;color:rgba(139,115,85,.6);font-family:monospace}
+.cat-empty{text-align:center;padding:60px 20px;color:var(--muted)}
+.cat-empty span{font-size:48px;display:block;margin-bottom:12px}
+
+/* ── COLECCIONES ── */
+#colecciones{background:var(--cs)}
+.col-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+.col-card{background:var(--cb);border:1px solid rgba(196,131,42,.15);border-radius:14px;padding:24px;text-align:center;transition:all .3s;cursor:pointer;position:relative;overflow:hidden}
+.col-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(196,131,42,.06),transparent);opacity:0;transition:opacity .3s}
+.col-card:hover::before{opacity:1}
+.col-card:hover{border-color:rgba(196,131,42,.4);transform:translateY(-4px)}
+.col-icon{font-size:40px;display:block;margin-bottom:14px}
+.col-name{font-family:var(--font-head);font-size:20px;color:var(--ivory);margin-bottom:6px}
+.col-desc{font-size:13px;color:var(--muted);line-height:1.5}
+.col-edit{position:absolute;top:10px;right:10px;opacity:0;transition:opacity .3s}
+.col-card:hover .col-edit{opacity:1}
+
+/* ── BENEFICIOS ── */
+#beneficios{background:var(--cr)}
+.ben-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px}
+.ben-card{background:var(--cb);border:1px solid rgba(196,131,42,.15);border-radius:14px;padding:28px 24px;text-align:center;transition:all .3s;cursor:pointer;position:relative}
+.ben-card:hover{border-color:rgba(196,131,42,.4);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.ben-icon-wrap{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,rgba(196,131,42,.2),rgba(196,131,42,.05));border:1px solid rgba(196,131,42,.3);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 16px}
+.ben-title{font-family:var(--font-head);font-size:20px;color:var(--ivory);margin-bottom:8px}
+.ben-text{font-size:13px;color:var(--muted);line-height:1.7}
+.ben-edit{position:absolute;top:12px;right:12px;opacity:0;transition:opacity .3s}
+.ben-card:hover .ben-edit{opacity:1}
+
+/* ── TESTIMONIOS ── */
+#testimonios{background:var(--cs)}
+.test-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+.test-card{background:var(--cb);border:1px solid rgba(196,131,42,.15);border-radius:14px;padding:24px;transition:all .3s;position:relative}
+.test-card:hover{border-color:rgba(196,131,42,.35)}
+.test-stars{color:var(--gold);font-size:14px;margin-bottom:12px;letter-spacing:2px}
+.test-quote{font-size:14px;color:var(--light);line-height:1.8;margin-bottom:16px;font-style:italic}
+.test-author{display:flex;align-items:center;gap:12px}
+.test-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:700;color:#000;font-size:16px;flex-shrink:0}
+.test-name{font-size:14px;font-weight:600;color:var(--ivory)}
+.test-loc{font-size:12px;color:var(--muted)}
+.test-actions{position:absolute;top:14px;right:14px;display:flex;gap:6px;opacity:0;transition:opacity .3s}
+.test-card:hover .test-actions{opacity:1}
+
+/* ── CONTACTO ── */
+#contacto{background:var(--cr)}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:start}
+.contact-info-item{display:flex;gap:16px;align-items:flex-start;margin-bottom:24px;cursor:pointer;padding:16px;border-radius:10px;border:1px solid transparent;transition:all .3s}
+.contact-info-item:hover{border-color:rgba(196,131,42,.3);background:rgba(196,131,42,.04)}
+.ci-icon{width:44px;height:44px;border-radius:10px;background:rgba(196,131,42,.12);border:1px solid rgba(196,131,42,.25);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.ci-label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;font-weight:600}
+.ci-value{color:var(--light);font-size:14px;line-height:1.6}
+.social-links{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap}
+.social-btn{background:rgba(196,131,42,.1);border:1px solid rgba(196,131,42,.25);color:var(--light);padding:8px 16px;border-radius:8px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px}
+.social-btn:hover{background:rgba(196,131,42,.2);color:var(--gold)}
+.contact-form-wrap{background:var(--cb);border:1px solid rgba(196,131,42,.2);border-radius:14px;padding:28px}
+.cf-title{font-family:var(--font-head);font-size:24px;color:var(--ivory);margin-bottom:20px}
+
+/* ── FOOTER ── */
+footer{background:var(--cs);border-top:1px solid rgba(196,131,42,.15);padding:40px 0 20px}
+.footer-inner{max-width:1240px;margin:0 auto;padding:0 24px}
+.footer-top{display:flex;gap:40px;margin-bottom:30px;flex-wrap:wrap;justify-content:space-between}
+.footer-brand .nav-brand{font-size:26px}
+.footer-tagline{font-size:13px;color:var(--muted);margin-top:8px}
+.footer-cols{display:flex;gap:50px;flex-wrap:wrap}
+.footer-col h4{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:14px;font-weight:600}
+.footer-col ul{list-style:none}
+.footer-col ul li{margin-bottom:8px}
+.footer-col ul li button{background:none;border:none;color:var(--muted);font-family:var(--font-body);font-size:13px;cursor:pointer;transition:color .2s;padding:0}
+.footer-col ul li button:hover{color:var(--gold)}
+.footer-bottom{border-top:1px solid rgba(196,131,42,.1);padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:gap}
+.footer-copy{font-size:12px;color:rgba(139,115,85,.5)}
+
+/* ── ADMIN PANEL ── */
+#admin-panel{position:fixed;top:0;right:-440px;width:440px;height:100vh;background:var(--cb);border-left:1px solid rgba(196,131,42,.3);z-index:800;overflow-y:auto;transition:right .35s cubic-bezier(.4,0,.2,1);box-shadow:-20px 0 60px rgba(0,0,0,.6)}
+#admin-panel.open{right:0}
+.ap-header{background:var(--cs);padding:20px 24px;border-bottom:1px solid rgba(196,131,42,.2);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:2}
+.ap-title{font-family:var(--font-head);font-size:20px;color:var(--gold)}
+.ap-close{background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;transition:color .2s}.ap-close:hover{color:var(--ivory)}
+.ap-body{padding:20px 24px}
+.ap-section{margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid rgba(196,131,42,.1)}
+.ap-section:last-child{border-bottom:none}
+.ap-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:14px;font-weight:600}
+.admin-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:799}
+.admin-overlay.open{display:block}
+
+/* ── BADGE ── */
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;letter-spacing:.3px}
+.badge-gold{background:rgba(196,131,42,.2);color:var(--gold2);border:1px solid rgba(196,131,42,.3)}
+.badge-green{background:rgba(26,92,48,.3);color:#5ED88F;border:1px solid rgba(26,92,48,.4)}
+.badge-red{background:rgba(139,32,32,.3);color:#F87878;border:1px solid rgba(139,32,32,.4)}
+.badge-gray{background:rgba(139,115,85,.15);color:var(--muted);border:1px solid rgba(139,115,85,.2)}
+
+/* ── IMAGE UPLOAD ── */
+.img-upload-zone{border:2px dashed rgba(196,131,42,.3);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:all .3s;color:var(--muted);font-size:13px}
+.img-upload-zone:hover{border-color:var(--gold);color:var(--gold);background:rgba(196,131,42,.04)}
+.img-preview{width:100%;max-height:180px;object-fit:cover;border-radius:8px;display:block;margin-top:10px}
+input[type=file]{display:none}
+
+/* ── SCROLL ANIM ── */
+.fade-up{opacity:0;transform:translateY(30px);transition:opacity .6s ease,transform .6s ease}
+.fade-up.visible{opacity:1;transform:translateY(0)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .hero-content{grid-template-columns:1fr;gap:40px}
+  .hero-img-wrap{display:none}
+  .hero-stats{gap:20px}
+  .nosotros-grid,.contact-grid{grid-template-columns:1fr}
+  .nav-links,.nav-admin{display:none}
+  .hamburger{display:flex}
+  .fr2{grid-template-columns:1fr}
+  .footer-top{flex-direction:column;gap:20px}
+  .footer-cols{gap:30px}
+  section{padding:60px 0}
+}
+@media(max-width:600px){
+  .cat-grid{grid-template-columns:1fr}
+  .col-grid{grid-template-columns:1fr 1fr}
+  .ben-grid{grid-template-columns:1fr}
+  .test-grid{grid-template-columns:1fr}
+  .hero-cta{flex-direction:column}
+  .modal{padding:20px}
+}
+</style>
+</head>
+<body>
+
+<div id="toast"></div>
+<div id="modal-root"></div>
+<div class="admin-overlay" id="admin-overlay" onclick="closeAdmin()"></div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <div class="nav-logo" onclick="scrollTo('hero')">
+      <div class="nav-logo-icon" id="nav-icon">S</div>
+      <div class="nav-brand" id="nav-brand">SOLEM</div>
+    </div>
+    <div class="nav-links">
+      <button class="nav-link" onclick="scrollTo('nosotros')">Nosotros</button>
+      <button class="nav-link" onclick="scrollTo('catalogo')">Catálogo</button>
+      <button class="nav-link" onclick="scrollTo('colecciones')">Colecciones</button>
+      <button class="nav-link" onclick="scrollTo('beneficios')">Beneficios</button>
+      <button class="nav-link" onclick="scrollTo('testimonios')">Testimonios</button>
+      <button class="nav-link" onclick="scrollTo('contacto')">Contacto</button>
+    </div>
+    <button class="nav-admin" onclick="openAdmin()">⚙ Admin</button>
+    <button class="hamburger" onclick="toggleMobile()" id="ham">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobile-menu">
+  <button class="mobile-link" onclick="scrollTo('nosotros');closeMobile()">Nosotros</button>
+  <button class="mobile-link" onclick="scrollTo('catalogo');closeMobile()">Catálogo</button>
+  <button class="mobile-link" onclick="scrollTo('colecciones');closeMobile()">Colecciones</button>
+  <button class="mobile-link" onclick="scrollTo('beneficios');closeMobile()">Beneficios</button>
+  <button class="mobile-link" onclick="scrollTo('testimonios');closeMobile()">Testimonios</button>
+  <button class="mobile-link" onclick="scrollTo('contacto');closeMobile()">Contacto</button>
+  <button class="mobile-link" onclick="openAdmin();closeMobile()" style="color:var(--gold)">⚙ Admin</button>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-pattern"></div>
+  <div class="hero-content">
+    <div class="fade-up">
+      <div class="hero-tag" id="hero-tag-display">Calzado de Autor</div>
+      <h1 class="hero-title"><span id="hero-name-display">SOLEM</span><br><em id="hero-slogan-display">Estilo y Confort</em></h1>
+      <p class="hero-slogan" id="hero-slogan2-display">Cada paso que das merece lo mejor. Diseñamos calzado que combina elegancia atemporal con comodidad excepcional para quienes no quieren comprometer.</p>
+      <div class="hero-cta">
+        <button class="btn btn-gold" onclick="scrollTo('catalogo')">Ver Catálogo →</button>
+        <button class="btn btn-out" onclick="scrollTo('nosotros')">Nuestra Historia</button>
+      </div>
+      <div class="hero-stats">
+        <div><div class="hstat-v" id="stat1-v">500+</div><div class="hstat-l" id="stat1-l">Clientes</div></div>
+        <div><div class="hstat-v" id="stat2-v">5</div><div class="hstat-l" id="stat2-l">Colecciones</div></div>
+        <div><div class="hstat-v" id="stat3-v">10+</div><div class="hstat-l" id="stat3-l">Años</div></div>
+      </div>
+    </div>
+    <div class="hero-img-wrap fade-up">
+      <div class="hero-img-frame" id="hero-img-frame" onclick="editHeroImg()">
+        <div class="hero-img-placeholder" id="hero-img-placeholder">
+          <span>👟</span>
+          <div style="font-size:13px;color:var(--muted)">Haz clic para subir imagen</div>
+        </div>
+        <img id="hero-img" src="" alt="SOLEM" style="display:none"/>
+        <div class="edit-overlay"><span>📷 Cambiar imagen</span></div>
+      </div>
+      <div class="hero-corner"></div>
+    </div>
+  </div>
+</section>
+
+<!-- NOSOTROS -->
+<section id="nosotros">
+  <div class="section-inner">
+    <div class="nosotros-grid fade-up">
+      <div>
+        <div class="section-tag">Nuestra Esencia</div>
+        <h2 class="section-title">Quiénes Somos</h2>
+        <div class="divider"></div>
+        <div class="historia-block" onclick="editNosotros('historia')">
+          <div class="historia-quote">"</div>
+          <p class="historia-text" id="historia-display">Nacimos en Trujillo con la convicción de que el calzado peruano puede competir con los mejores del mundo. SOLEM nació de la pasión por el arte del zapatero, combinando técnicas tradicionales con diseño contemporáneo para crear piezas que cuentan historias.</p>
+          <div style="margin-top:12px;font-size:12px;color:var(--gold)">✏ Editar historia →</div>
+        </div>
+      </div>
+      <div>
+        <div class="nosotros-card" onclick="editNosotros('mision')">
+          <div class="nc-icon">🎯</div>
+          <div class="nc-label">Misión</div>
+          <div class="nc-text" id="mision-display">Crear calzado de alta calidad que refleje la identidad peruana, combinando materiales premium con diseño innovador, brindando comodidad y estilo a cada cliente.</div>
+        </div>
+        <div class="nosotros-card" onclick="editNosotros('vision')">
+          <div class="nc-icon">🔭</div>
+          <div class="nc-label">Visión</div>
+          <div class="nc-text" id="vision-display">Ser la marca de calzado peruano más reconocida a nivel latinoamericano, liderando con diseño, calidad y sostenibilidad, siendo referente de la industria del calzado en la región.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CATÁLOGO -->
+<section id="catalogo">
+  <div class="section-inner">
+    <div class="fade-up" style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;margin-bottom:30px">
+      <div>
+        <div class="section-tag">Nuestros Productos</div>
+        <h2 class="section-title">Catálogo</h2>
+      </div>
+      <button class="btn btn-gold" onclick="openProductModal()">+ Agregar Producto</button>
+    </div>
+    <div class="cat-toolbar fade-up">
+      <div class="cat-search"><input id="cat-search" placeholder="Buscar productos..." oninput="renderCatalog()"/></div>
+      <div class="cat-filters" id="cat-filters"></div>
+    </div>
+    <div class="cat-grid" id="cat-grid"></div>
+  </div>
+</section>
+
+<!-- COLECCIONES -->
+<section id="colecciones">
+  <div class="section-inner">
+    <div class="fade-up" style="text-align:center;margin-bottom:40px">
+      <div class="section-tag">Explora</div>
+      <h2 class="section-title">Nuestras Colecciones</h2>
+      <div class="divider" style="margin:16px auto"></div>
+    </div>
+    <div class="col-grid fade-up" id="col-grid"></div>
+  </div>
+</section>
+
+<!-- BENEFICIOS -->
+<section id="beneficios">
+  <div class="section-inner">
+    <div class="fade-up" style="text-align:center;margin-bottom:40px">
+      <div class="section-tag">¿Por qué elegirnos?</div>
+      <h2 class="section-title">Nuestros Beneficios</h2>
+      <div class="divider" style="margin:16px auto"></div>
+    </div>
+    <div class="ben-grid fade-up" id="ben-grid"></div>
+  </div>
+</section>
+
+<!-- TESTIMONIOS -->
+<section id="testimonios">
+  <div class="section-inner">
+    <div class="fade-up" style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;margin-bottom:30px">
+      <div>
+        <div class="section-tag">Lo que dicen</div>
+        <h2 class="section-title">Testimonios</h2>
+      </div>
+      <button class="btn btn-out" onclick="openTestimonioModal()">+ Agregar Testimonio</button>
+    </div>
+    <div class="test-grid fade-up" id="test-grid"></div>
+  </div>
+</section>
+
+<!-- CONTACTO -->
+<section id="contacto">
+  <div class="section-inner">
+    <div class="fade-up" style="margin-bottom:40px">
+      <div class="section-tag">Encuéntranos</div>
+      <h2 class="section-title">Contacto</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="contact-grid fade-up">
+      <div>
+        <div class="contact-info-item" onclick="editContacto('direccion')">
+          <div class="ci-icon">📍</div>
+          <div><div class="ci-label">Dirección</div><div class="ci-value" id="ci-direccion"></div></div>
+        </div>
+        <div class="contact-info-item" onclick="editContacto('telefono')">
+          <div class="ci-icon">📞</div>
+          <div><div class="ci-label">Teléfono</div><div class="ci-value" id="ci-telefono"></div></div>
+        </div>
+        <div class="contact-info-item" onclick="editContacto('correo')">
+          <div class="ci-icon">✉️</div>
+          <div><div class="ci-label">Correo</div><div class="ci-value" id="ci-correo"></div></div>
+        </div>
+        <div class="contact-info-item" onclick="editContacto('horario')">
+          <div class="ci-icon">🕐</div>
+          <div><div class="ci-label">Horario</div><div class="ci-value" id="ci-horario"></div></div>
+        </div>
+        <div style="padding:16px">
+          <div class="ci-label" style="margin-bottom:12px">Redes Sociales</div>
+          <div class="social-links" id="social-links"></div>
+          <button class="btn btn-sm btn-out" style="margin-top:12px" onclick="editContacto('redes')">✏ Editar Redes</button>
+        </div>
+      </div>
+      <div class="contact-form-wrap">
+        <div class="cf-title">Escríbenos</div>
+        <div class="fg"><label class="fl">Nombre</label><input class="fi" id="cf-nombre" placeholder="Tu nombre"/></div>
+        <div class="fg"><label class="fl">Correo</label><input class="fi" id="cf-correo" type="email" placeholder="correo@ejemplo.com"/></div>
+        <div class="fg"><label class="fl">Mensaje</label><textarea class="fi" id="cf-mensaje" placeholder="¿En qué podemos ayudarte?"></textarea></div>
+        <button class="btn btn-gold btn-full" onclick="sendContactForm()" style="width:100%;justify-content:center">Enviar Mensaje</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="nav-logo-icon" style="width:32px;height:32px;font-size:15px" id="footer-icon">S</div>
+          <div class="nav-brand" id="footer-brand">SOLEM</div>
+        </div>
+        <div class="footer-tagline" id="footer-slogan">Estilo y Confort · Trujillo, Perú</div>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>Navegación</h4>
+          <ul>
+            <li><button onclick="scrollTo('nosotros')">Nosotros</button></li>
+            <li><button onclick="scrollTo('catalogo')">Catálogo</button></li>
+            <li><button onclick="scrollTo('colecciones')">Colecciones</button></li>
+            <li><button onclick="scrollTo('beneficios')">Beneficios</button></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Colecciones</h4>
+          <ul id="footer-cols-list"></ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy" id="footer-copy">© 2026 SOLEM · Todos los derechos reservados · Trujillo, La Libertad, Perú</div>
+    </div>
+  </div>
+</footer>
+
+<!-- ADMIN PANEL -->
+<div id="admin-panel">
+  <div class="ap-header">
+    <div class="ap-title">Panel Admin</div>
+    <button class="ap-close" onclick="closeAdmin()">✕</button>
+  </div>
+  <div class="ap-body">
+    <div class="ap-section">
+      <div class="ap-label">Sección Inicio</div>
+      <div class="fg"><label class="fl">Nombre Marca</label><input class="fi" id="ap-nombre" oninput="quickSave('nombre',this.value)"/></div>
+      <div class="fg"><label class="fl">Eslogan Principal</label><input class="fi" id="ap-slogan" oninput="quickSave('slogan',this.value)"/></div>
+      <div class="fg"><label class="fl">Eslogan Secundario</label><textarea class="fi" id="ap-slogan2" oninput="quickSave('slogan2',this.value)" style="min-height:70px"></textarea></div>
+      <div class="fg"><label class="fl">Subtítulo hero (ej: Calzado de Autor)</label><input class="fi" id="ap-tag" oninput="quickSave('tag',this.value)"/></div>
+    </div>
+    <div class="ap-section">
+      <div class="ap-label">Estadísticas Hero</div>
+      <div class="fr2">
+        <div class="fg"><label class="fl">Stat 1 Valor</label><input class="fi" id="ap-s1v" oninput="quickSave('s1v',this.value)"/></div>
+        <div class="fg"><label class="fl">Stat 1 Label</label><input class="fi" id="ap-s1l" oninput="quickSave('s1l',this.value)"/></div>
+        <div class="fg"><label class="fl">Stat 2 Valor</label><input class="fi" id="ap-s2v" oninput="quickSave('s2v',this.value)"/></div>
+        <div class="fg"><label class="fl">Stat 2 Label</label><input class="fi" id="ap-s2l" oninput="quickSave('s2l',this.value)"/></div>
+        <div class="fg"><label class="fl">Stat 3 Valor</label><input class="fi" id="ap-s3v" oninput="quickSave('s3v',this.value)"/></div>
+        <div class="fg"><label class="fl">Stat 3 Label</label><input class="fi" id="ap-s3l" oninput="quickSave('s3l',this.value)"/></div>
+      </div>
+    </div>
+    <div class="ap-section">
+      <div class="ap-label">Imagen Hero</div>
+      <div class="img-upload-zone" onclick="document.getElementById('ap-hero-img-input').click()">
+        📷 Subir imagen principal<br><span style="font-size:11px;color:var(--muted)">JPG, PNG, WEBP · Max 5MB</span>
+      </div>
+      <input type="file" id="ap-hero-img-input" accept="image/*" onchange="uploadHeroImg(this)"/>
+      <img id="ap-hero-preview" class="img-preview" style="display:none"/>
+      <button class="btn btn-sm btn-red" style="margin-top:8px;display:none" id="ap-hero-remove" onclick="removeHeroImg()">✕ Quitar imagen</button>
+    </div>
+    <div class="ap-section">
+      <div class="ap-label">Exportar / Importar</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-sm btn-out" onclick="exportData()">📥 Exportar datos</button>
+        <button class="btn btn-sm btn-out" onclick="document.getElementById('import-input').click()">📤 Importar datos</button>
+        <input type="file" id="import-input" accept=".json" onchange="importData(this)" style="display:none"/>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+//  DATA DEFAULTS
+// ══════════════════════════════════════════
+const DEFAULTS = {
+  nombre: 'SOLEM',
+  slogan: 'Estilo y Confort',
+  slogan2: 'Cada paso que das merece lo mejor. Diseñamos calzado que combina elegancia atemporal con comodidad excepcional para quienes no quieren comprometer.',
+  tag: 'Calzado de Autor',
+  s1v:'500+', s1l:'Clientes', s2v:'5', s2l:'Colecciones', s3v:'10+', s3l:'Años',
+  heroImg: '',
+  historia: 'Nacimos en Trujillo con la convicción de que el calzado peruano puede competir con los mejores del mundo. SOLEM nació de la pasión por el arte del zapatero, combinando técnicas tradicionales con diseño contemporáneo para crear piezas que cuentan historias.',
+  mision: 'Crear calzado de alta calidad que refleje la identidad peruana, combinando materiales premium con diseño innovador, brindando comodidad y estilo a cada cliente.',
+  vision: 'Ser la marca de calzado peruano más reconocida a nivel latinoamericano, liderando con diseño, calidad y sostenibilidad, siendo referente de la industria del calzado en la región.',
+  contacto: {
+    direccion: 'Av. España 1234, Centro Comercial Open Plaza, Trujillo, La Libertad, Perú',
+    telefono: '+51 944 123 456 / (044) 234-567',
+    correo: 'contacto@solem.pe',
+    horario: 'Lun–Sáb: 9:00–8:00pm · Dom: 10:00–6:00pm',
+    redes: [
+      {icon:'📷', label:'Instagram', url:'https://instagram.com/solem.pe'},
+      {icon:'📘', label:'Facebook', url:'https://facebook.com/solem.pe'},
+      {icon:'💬', label:'WhatsApp', url:'https://wa.me/51944123456'},
+      {icon:'🎵', label:'TikTok', url:'https://tiktok.com/@solem.pe'},
+    ]
+  },
+  productos: [
+    {id:'p1',nombre:'Zapatillas Urbanas',categoria:'Urbanos',precio:179,descripcion:'Diseño contemporáneo para el día a día urbano. Suela antideslizante y plantilla de memoria.',codigo:'SOL-URB-001',estado:'Activo',img:''},
+    {id:'p2',nombre:'Tacones Elegantes',categoria:'Formales',precio:169,descripcion:'Elegancia y altura para cada ocasión especial. Cuero genuino y acabados artesanales.',codigo:'SOL-FOR-002',estado:'Activo',img:''},
+    {id:'p3',nombre:'Calzado Formal',categoria:'Formales',precio:189,descripcion:'Línea ejecutiva para el hombre moderno. Diseño clásico con confort superior.',codigo:'SOL-FOR-003',estado:'Activo',img:''},
+    {id:'p4',nombre:'Botas de Cuero',categoria:'Casuales',precio:229,descripcion:'Botas artesanales de cuero curtido. Perfectas para el invierno con estilo.',codigo:'SOL-CAS-004',estado:'Activo',img:''},
+    {id:'p5',nombre:'Sandalias Casuales',categoria:'Casuales',precio:129,descripcion:'Frescura y comodidad para el verano. Materiales respirables y diseño abierto.',codigo:'SOL-CAS-005',estado:'Activo',img:''},
+    {id:'p6',nombre:'Zapatillas Deportivas',categoria:'Deportivos',precio:199,descripcion:'Alto rendimiento para tus actividades deportivas. Tecnología de amortiguación avanzada.',codigo:'SOL-DEP-006',estado:'Activo',img:''},
+  ],
+  colecciones: [
+    {id:'c1',nombre:'Zapatillas',icon:'👟',descripcion:'Estilo urbano para cada día'},
+    {id:'c2',nombre:'Casuales',icon:'🩴',descripcion:'Comodidad en cada paso'},
+    {id:'c3',nombre:'Urbanos',icon:'🥿',descripcion:'Diseño para la ciudad'},
+    {id:'c4',nombre:'Deportivos',icon:'🏃',descripcion:'Rendimiento sin límites'},
+    {id:'c5',nombre:'Formales',icon:'👞',descripcion:'Elegancia atemporal'},
+  ],
+  beneficios: [
+    {id:'b1',icon:'💎',titulo:'Calidad Premium',texto:'Materiales cuidadosamente seleccionados y procesos artesanales que garantizan calzado de alta calidad en cada par.'},
+    {id:'b2',icon:'🛡️',titulo:'Garantía Total',texto:'6 meses de garantía en todos nuestros productos. Tu satisfacción es nuestra prioridad número uno.'},
+    {id:'b3',icon:'🚚',titulo:'Entrega Rápida',texto:'Envíos a todo el Perú en 24–72 horas. Seguimiento en tiempo real de tu pedido hasta tu puerta.'},
+    {id:'b4',icon:'💬',titulo:'Atención 24/7',texto:'Nuestro equipo está disponible para ayudarte en cualquier momento. Chat, WhatsApp y teléfono.'},
+  ],
+  testimonios: [
+    {id:'t1',nombre:'Carlos Mendoza',ubicacion:'Trujillo',estrellas:5,texto:'Las zapatillas urbanas son increíbles. Calidad excepcional y muy cómodas para todo el día. Definitivamente mi marca favorita.'},
+    {id:'t2',nombre:'María Rodríguez',ubicacion:'Lima',estrellas:5,texto:'Los tacones elegantes son perfectos. Me los puse en mi boda y recibí decenas de cumplidos. La atención fue excelente.'},
+    {id:'t3',nombre:'José García',ubicacion:'Chiclayo',estrellas:5,texto:'El calzado formal es de primera. Se nota la calidad artesanal y el cuero es genuino. Muy recomendado para ejecutivos.'},
+  ]
+};
+
+// ══════════════════════════════════════════
+//  STORAGE
+// ══════════════════════════════════════════
+const KEY = 'solem_catalog_v1';
+let DATA = {};
+
+function loadData(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    DATA = raw ? JSON.parse(raw) : JSON.parse(JSON.stringify(DEFAULTS));
+  }catch(e){
+    DATA = JSON.parse(JSON.stringify(DEFAULTS));
+  }
+  // Merge missing keys
+  for(const k in DEFAULTS){
+    if(DATA[k] === undefined) DATA[k] = DEFAULTS[k];
+  }
+}
+
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(DATA)); }catch(e){ console.error(e); }
+}
+
+// ══════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════
+function toast(msg, type='ok'){
+  const t = document.getElementById('toast');
+  const d = document.createElement('div');
+  d.className = `toast-item ${type}`;
+  d.textContent = (type==='ok'?'✓ ':type==='err'?'✗ ':'') + msg;
+  t.appendChild(d);
+  setTimeout(()=>d.remove(), 3200);
+}
+
+// ══════════════════════════════════════════
+//  SCROLLTO
+// ══════════════════════════════════════════
+function scrollTo(id){
+  document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ══════════════════════════════════════════
+//  NAV MOBILE
+// ══════════════════════════════════════════
+function toggleMobile(){
+  document.getElementById('mobile-menu').classList.toggle('open');
+}
+function closeMobile(){
+  document.getElementById('mobile-menu').classList.remove('open');
+}
+
+// ══════════════════════════════════════════
+//  ADMIN PANEL
+// ══════════════════════════════════════════
+function openAdmin(){
+  document.getElementById('admin-panel').classList.add('open');
+  document.getElementById('admin-overlay').classList.add('open');
+  fillAdminPanel();
+}
+function closeAdmin(){
+  document.getElementById('admin-panel').classList.remove('open');
+  document.getElementById('admin-overlay').classList.remove('open');
+}
+function fillAdminPanel(){
+  const fields = ['nombre','slogan','slogan2','tag','s1v','s1l','s2v','s2l','s3v','s3l'];
+  fields.forEach(f=>{
+    const el = document.getElementById('ap-'+f);
+    if(el) el.value = DATA[f]||'';
+  });
+  const prev = document.getElementById('ap-hero-preview');
+  const rem = document.getElementById('ap-hero-remove');
+  if(DATA.heroImg){
+    prev.src=DATA.heroImg; prev.style.display='block'; rem.style.display='inline-flex';
+  } else {
+    prev.style.display='none'; rem.style.display='none';
+  }
+}
+function quickSave(key, val){
+  DATA[key] = val;
+  save();
+  renderHero();
+}
+
+// ══════════════════════════════════════════
+//  HERO IMAGE
+// ══════════════════════════════════════════
+function uploadHeroImg(input){
+  const file = input.files[0];
+  if(!file) return;
+  if(file.size > 5*1024*1024){ toast('Imagen demasiado grande (máx 5MB)','err'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    DATA.heroImg = e.target.result;
+    save();
+    renderHero();
+    const prev = document.getElementById('ap-hero-preview');
+    prev.src=DATA.heroImg; prev.style.display='block';
+    document.getElementById('ap-hero-remove').style.display='inline-flex';
+    toast('Imagen actualizada');
+  };
+  reader.readAsDataURL(file);
+}
+function removeHeroImg(){
+  DATA.heroImg=''; save(); renderHero();
+  document.getElementById('ap-hero-preview').style.display='none';
+  document.getElementById('ap-hero-remove').style.display='none';
+  toast('Imagen eliminada');
+}
+function editHeroImg(){
+  document.getElementById('ap-hero-img-input').click();
+}
+
+// ══════════════════════════════════════════
+//  RENDER HERO
+// ══════════════════════════════════════════
+function renderHero(){
+  setText('nav-brand', DATA.nombre);
+  setText('footer-brand', DATA.nombre);
+  setText('hero-name-display', DATA.nombre);
+  setText('hero-slogan-display', DATA.slogan);
+  setText('hero-slogan2-display', DATA.slogan2);
+  setText('hero-tag-display', DATA.tag);
+  setText('stat1-v', DATA.s1v); setText('stat1-l', DATA.s1l);
+  setText('stat2-v', DATA.s2v); setText('stat2-l', DATA.s2l);
+  setText('stat3-v', DATA.s3v); setText('stat3-l', DATA.s3l);
+  setText('footer-slogan', DATA.slogan + ' · Trujillo, Perú');
+  // nav icon
+  const ic = (DATA.nombre||'S').charAt(0).toUpperCase();
+  document.getElementById('nav-icon').textContent = ic;
+  document.getElementById('footer-icon').textContent = ic;
+  // hero img
+  const img = document.getElementById('hero-img');
+  const ph = document.getElementById('hero-img-placeholder');
+  if(DATA.heroImg){ img.src=DATA.heroImg; img.style.display='block'; ph.style.display='none'; }
+  else { img.style.display='none'; ph.style.display='flex'; }
+  // title
+  document.title = (DATA.nombre||'SOLEM') + ' · Calzado';
+}
+
+function setText(id, val){
+  const el = document.getElementById(id);
+  if(el) el.textContent = val;
+}
+
+// ══════════════════════════════════════════
+//  NOSOTROS
+// ══════════════════════════════════════════
+function renderNosotros(){
+  setText('historia-display', DATA.historia);
+  setText('mision-display', DATA.mision);
+  setText('vision-display', DATA.vision);
+}
+function editNosotros(campo){
+  const labels = {historia:'Historia de la Marca', mision:'Misión', vision:'Visión'};
+  const modal = createModal(labels[campo]);
+  modal.innerHTML += `
+    <div class="fg"><label class="fl">${labels[campo]}</label>
+    <textarea class="fi" id="nos-text" style="min-height:140px">${DATA[campo]||''}</textarea></div>
+    <div class="btn-row">
+      <button class="btn btn-gold" onclick="saveNosotros('${campo}')">Guardar</button>
+      <button class="btn btn-out" onclick="closeModal()">Cancelar</button>
+    </div>`;
+}
+function saveNosotros(campo){
+  DATA[campo] = document.getElementById('nos-text').value;
+  save(); renderNosotros(); closeModal();
+  toast('Información actualizada');
+}
+
+// ══════════════════════════════════════════
+//  PRODUCTOS
+// ══════════════════════════════════════════
+const CATS = ['Todas','Zapatillas','Casuales','Urbanos','Deportivos','Formales'];
+let catFilter = 'Todas';
+
+function renderCatalog(){
+  const q = document.getElementById('cat-search')?.value?.toLowerCase()||'';
+  // Filters
+  document.getElementById('cat-filters').innerHTML = CATS.map(c=>
+    `<button class="filter-btn${catFilter===c?' active':''}" onclick="setCatFilter('${c}')">${c}</button>`
+  ).join('');
+  // Products
+  let prods = DATA.productos||[];
+  if(catFilter!=='Todas') prods = prods.filter(p=>p.categoria===catFilter);
+  if(q) prods = prods.filter(p=>(p.nombre+p.descripcion+p.categoria+p.codigo).toLowerCase().includes(q));
+  const grid = document.getElementById('cat-grid');
+  if(!prods.length){
+    grid.innerHTML = `<div class="cat-empty" style="grid-column:1/-1"><span>🔍</span>No se encontraron productos</div>`;
+    return;
+  }
+  grid.innerHTML = prods.map(p=>`
+    <div class="prod-card">
+      <div class="prod-img">
+        ${p.img?`<img src="${p.img}" alt="${p.nombre}"/>`:
+          `<div class="prod-img-placeholder">${catIcon(p.categoria)}</div>`}
+        <div class="prod-badge${p.estado==='Inactivo'?' inactive':''}">${p.estado||'Activo'}</div>
+        <div class="prod-actions">
+          <button class="btn-icon" onclick="event.stopPropagation();openProductModal('${p.id}')" title="Editar">✏</button>
+          <button class="btn-icon" onclick="event.stopPropagation();deleteProduct('${p.id}')" title="Eliminar" style="color:#F87878">🗑</button>
+        </div>
+      </div>
+      <div class="prod-body">
+        <div class="prod-cat">${p.categoria}</div>
+        <div class="prod-name">${p.nombre}</div>
+        <div class="prod-desc">${p.descripcion}</div>
+        <div class="prod-footer">
+          <div class="prod-price">S/ ${Number(p.precio).toFixed(2)}</div>
+          <div class="prod-code">${p.codigo}</div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function catIcon(cat){
+  const m={Zapatillas:'👟',Casuales:'🩴',Urbanos:'🥿',Deportivos:'🏃',Formales:'👞'};
+  return m[cat]||'👟';
+}
+function setCatFilter(c){ catFilter=c; renderCatalog(); }
+
+function openProductModal(id=null){
+  const p = id ? (DATA.productos||[]).find(x=>x.id===id) : null;
+  const title = p ? 'Editar Producto' : 'Agregar Producto';
+  const modal = createModal(title);
+  modal.innerHTML += `
+    <div class="fg"><label class="fl">Nombre</label><input class="fi" id="pm-nombre" value="${p?.nombre||''}"/></div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Categoría</label>
+        <select class="fi" id="pm-cat">
+          ${['Zapatillas','Casuales','Urbanos','Deportivos','Formales'].map(c=>`<option${p?.categoria===c?' selected':''}>${c}</option>`).join('')}
+        </select>
+      </div>
+      <div class="fg"><label class="fl">Precio (S/)</label><input class="fi" id="pm-precio" type="number" step="0.01" value="${p?.precio||''}"/></div>
+    </div>
+    <div class="fg"><label class="fl">Descripción</label><textarea class="fi" id="pm-desc">${p?.descripcion||''}</textarea></div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Código</label><input class="fi" id="pm-codigo" value="${p?.codigo||''}"/></div>
+      <div class="fg"><label class="fl">Estado</label>
+        <select class="fi" id="pm-estado">
+          <option${!p||p.estado==='Activo'?' selected':''}>Activo</option>
+          <option${p?.estado==='Inactivo'?' selected':''}>Inactivo</option>
+          <option${p?.estado==='Agotado'?' selected':''}>Agotado</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg"><label class="fl">Imagen del Producto</label>
+      <div class="img-upload-zone" onclick="document.getElementById('pm-img-input').click()">
+        📷 Subir imagen del producto<br><span style="font-size:11px;color:var(--muted)">JPG, PNG, WEBP</span>
+      </div>
+      <input type="file" id="pm-img-input" accept="image/*" onchange="previewProdImg(this)"/>
+      <img id="pm-img-preview" class="img-preview" src="${p?.img||''}" style="display:${p?.img?'block':'none'}"/>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-gold" onclick="saveProduct('${id||''}')">Guardar</button>
+      <button class="btn btn-out" onclick="closeModal()">Cancelar</button>
+    </div>`;
+  // Store current img
+  window._pmImg = p?.img||'';
+}
+function previewProdImg(input){
+  const file=input.files[0]; if(!file) return;
+  if(file.size>5*1024*1024){toast('Imagen demasiado grande','err');return;}
+  const r=new FileReader(); r.onload=e=>{
+    const prev=document.getElementById('pm-img-preview');
+    prev.src=e.target.result; prev.style.display='block'; window._pmImg=e.target.result;
+  }; r.readAsDataURL(file);
+}
+function saveProduct(id){
+  const nombre=document.getElementById('pm-nombre').value.trim();
+  if(!nombre){toast('El nombre es obligatorio','err');return;}
+  const prod={
+    id: id||('p'+Date.now()),
+    nombre, categoria: document.getElementById('pm-cat').value,
+    precio: parseFloat(document.getElementById('pm-precio').value)||0,
+    descripcion: document.getElementById('pm-desc').value.trim(),
+    codigo: document.getElementById('pm-codigo').value.trim(),
+    estado: document.getElementById('pm-estado').value,
+    img: window._pmImg||''
+  };
+  if(id){
+    const i=DATA.productos.findIndex(p=>p.id===id);
+    if(i>=0) DATA.productos[i]=prod;
+  } else {
+    DATA.productos.push(prod);
+  }
+  save(); renderCatalog(); closeModal();
+  toast(id?'Producto actualizado':'Producto agregado');
+}
+function deleteProduct(id){
+  if(!confirm('¿Eliminar este producto?')) return;
+  DATA.productos = DATA.productos.filter(p=>p.id!==id);
+  save(); renderCatalog(); toast('Producto eliminado');
+}
+
+// ══════════════════════════════════════════
+//  COLECCIONES
+// ══════════════════════════════════════════
+function renderColecciones(){
+  const grid = document.getElementById('col-grid');
+  grid.innerHTML = (DATA.colecciones||[]).map(c=>`
+    <div class="col-card" onclick="editColeccion('${c.id}')">
+      <button class="btn-icon col-edit" onclick="event.stopPropagation();editColeccion('${c.id}')">✏</button>
+      <span class="col-icon">${c.icon}</span>
+      <div class="col-name">${c.nombre}</div>
+      <div class="col-desc">${c.descripcion}</div>
+    </div>`).join('');
+  // Footer list
+  document.getElementById('footer-cols-list').innerHTML = (DATA.colecciones||[])
+    .map(c=>`<li><button onclick="setCatFilter('${c.nombre}');scrollTo('catalogo')">${c.nombre}</button></li>`).join('');
+}
+function editColeccion(id){
+  const c=DATA.colecciones.find(x=>x.id===id);
+  if(!c) return;
+  const modal=createModal('Editar Colección');
+  modal.innerHTML+=`
+    <div class="fg"><label class="fl">Nombre</label><input class="fi" id="col-nombre" value="${c.nombre}"/></div>
+    <div class="fg"><label class="fl">Emoji / Ícono</label><input class="fi" id="col-icon" value="${c.icon}"/></div>
+    <div class="fg"><label class="fl">Descripción</label><input class="fi" id="col-desc" value="${c.descripcion}"/></div>
+    <div class="btn-row">
+      <button class="btn btn-gold" onclick="saveColeccion('${id}')">Guardar</button>
+      <button class="btn btn-out" onclick="closeModal()">Cancelar</button>
+    </div>`;
+}
+function saveColeccion(id){
+  const c=DATA.colecciones.find(x=>x.id===id);
+  if(c){
+    c.nombre=document.getElementById('col-nombre').value;
+    c.icon=document.getElementById('col-icon').value;
+    c.descripcion=document.getElementById('col-desc').value;
+  }
+  save(); renderColecciones(); closeModal(); toast('Colección actualizada');
+}
+
+// ══════════════════════════════════════════
+//  BENEFICIOS
+// ══════════════════════════════════════════
+function renderBeneficios(){
+  document.getElementById('ben-grid').innerHTML=(DATA.beneficios||[]).map(b=>`
+    <div class="ben-card" onclick="editBeneficio('${b.id}')">
+      <button class="btn-icon ben-edit" onclick="event.stopPropagation();editBeneficio('${b.id}')">✏</button>
+      <div class="ben-icon-wrap">${b.icon}</div>
+      <div class="ben-title">${b.titulo}</div>
+      <div class="ben-text">${b.texto}</div>
+    </div>`).join('');
+}
+function editBeneficio(id){
+  const b=DATA.beneficios.find(x=>x.id===id);
+  if(!b) return;
+  const modal=createModal('Editar Beneficio');
+  modal.innerHTML+=`
+    <div class="fg"><label class="fl">Emoji / Ícono</label><input class="fi" id="ben-icon" value="${b.icon}"/></div>
+    <div class="fg"><label class="fl">Título</label><input class="fi" id="ben-titulo" value="${b.titulo}"/></div>
+    <div class="fg"><label class="fl">Texto</label><textarea class="fi" id="ben-texto">${b.texto}</textarea></div>
+    <div class="btn-row">
+      <button class="btn btn-gold" onclick="saveBeneficio('${id}')">Guardar</button>
+      <button class="btn btn-out" onclick="closeModal()">Cancelar</button>
+    </div>`;
+}
+function saveBeneficio(id){
+  const b=DATA.beneficios.find(x=>x.id===id);
+  if(b){b.icon=document.getElementById('ben-icon').value;b.titulo=document.getElementById('ben-titulo').value;b.texto=document.getElementById('ben-texto').value;}
+  save(); renderBeneficios(); closeModal(); toast('Beneficio actualizado');
+}
+
+// ══════════════════════════════════════════
+//  TESTIMONIOS
+// ══════════════════════════════════════════
+function renderTestimonios(){
+  document.getElementById('test-grid').innerHTML=(DATA.testimonios||[]).map(t=>`
+    <div class="test-card">
+      <div class="test-actions">
+        <button class="btn-icon" onclick="editTestimonio('${t.id}')">✏</button>
+        <button class="btn-icon" onclick="deleteTestimonio('${t.id}')" style="color:#F87878">🗑</button>
+      </div>
+      <div class="test-stars">${'★'.repeat(t.estrellas||5)}</div>
+      <div class="test-quote">"${t.texto}"</div>
+      <div class="test-author">
+        <div class="test-avatar">${(t.nombre||'?').charAt(0)}</div>
+        <div><div class="test-name">${t.nombre}</div><div class="test-loc">${t.ubicacion}</div></div>
+      </div>
+    </div>`).join('');
+}
+function openTestimonioModal(id=null){
+  const t=id?(DATA.testimonios||[]).find(x=>x.id===id):null;
+  const modal=createModal(t?'Editar Testimonio':'Agregar Testimonio');
+  modal.innerHTML+=`
+    <div class="fg"><label class="fl">Nombre del Cliente</label><input class="fi" id="tm-nombre" value="${t?.nombre||''}"/></div>
+    <div class="fg"><label class="fl">Ciudad / Ubicación</label><input class="fi" id="tm-ubi" value="${t?.ubicacion||''}"/></div>
+    <div class="fg"><label class="fl">Estrellas (1–5)</label><input class="fi" id="tm-stars" type="number" min="1" max="5" value="${t?.estrellas||5}"/></div>
+    <div class="fg"><label class="fl">Testimonio</label><textarea class="fi" id="tm-texto" style="min-height:100px">${t?.texto||''}</textarea></div>
+    <div class="btn-row">
+      <button class="btn btn-gold" onclick="saveTestimonio('${id||''}')">Guardar</button>
+      <button class="btn btn-out" onclick="closeModal()">Cancelar</button>
+    </div>`;
+}
+function editTestimonio(id){ openTestimonioModal(id); }
+function saveTestimonio(id){
+  const nombre=document.getElementById('tm-nombre').value.trim();
+  if(!nombre){toast('El nombre es obligatorio','err');return;}
+  const t={id:id||('t'+Date.now()),nombre,ubicacion:document.getElementById('tm-ubi').value.trim(),estrellas:parseInt(document.getElementById('tm-stars').value)||5,texto:document.getElementById('tm-texto').value.trim()};
+  if(id){const i=(DATA.testimonios||[]).findIndex(x=>x.id===id);if(i>=0)DATA.testimonios[i]=t;}
+  else{(DATA.testimonios=DATA.testimonios||[]).push(t);}
+  save(); renderTestimonios(); closeModal(); toast(id?'Testimonio actualizado':'Testimonio agregado');
+}
+function deleteTestimonio(id){
+  if(!confirm('¿Eliminar este testimonio?')) return;
+  DATA.testimonios=(DATA.testimonios||[]).filter(t=>t.id!==id);
+  save(); renderTestimonios(); toast('Testimonio eliminado');
+}
+
+// ══════════════════════════════════════════
+//  CONTACTO
+// ══════════════════════════════════════════
+function renderContacto(){
+  const c=DATA.contacto||{};
+  setText('ci-direccion', c.direccion||'');
+  setText('ci-telefono', c.telefono||'');
+  setText('ci-correo', c.correo||'');
+  setText('ci-horario', c.horario||'');
+  const sl=document.getElementById('social-links');
+  sl.innerHTML=(c.redes||[]).map(r=>`<button class="social-btn" onclick="window.open('${r.url}','_blank')">${r.icon} ${r.label}</button>`).join('');
+}
+function editContacto(campo){
+  const c=DATA.contacto||{};
+  if(campo==='redes'){
+    const modal=createModal('Editar Redes Sociales');
+    const redes=c.redes||[];
+    modal.innerHTML+=`
+      <div id="redes-list">${redes.map((r,i)=>`
+        <div class="fr2" style="margin-bottom:8px;gap:8px">
+          <input class="fi" id="rs-icon-${i}" value="${r.icon}" placeholder="Emoji"/>
+          <input class="fi" id="rs-label-${i}" value="${r.label}" placeholder="Nombre"/>
+          <input class="fi" id="rs-url-${i}" value="${r.url}" placeholder="URL" style="grid-column:1/-1"/>
+        </div>`).join('')}</div>
+      <button class="btn btn-sm btn-out" onclick="addRedRow(${redes.length})" style="margin-bottom:16px">+ Agregar red</button>
+      <div class="btn-row">
+        <button class="btn btn-gold" onclick="saveRedes(${redes.length})">Guardar</button>
+        <button class="btn btn-out" onclick="closeModal()">Cancelar</button>
+      </div>`;
+    window._redesCount=redes.length;
+    return;
+  }
+  const labels={direccion:'Dirección',telefono:'Teléfono',correo:'Correo Electrónico',horario:'Horario de Atención'};
+  const modal=createModal('Editar '+labels[campo]);
+  modal.innerHTML+=`
+    <div class="fg"><label class="fl">${labels[campo]}</label>
+    <textarea class="fi" id="ct-val" style="min-height:80px">${c[campo]||''}</textarea></div>
+    <div class="btn-row">
+      <button class="btn btn-gold" onclick="saveContactoField('${campo}')">Guardar</button>
+      <button class="btn btn-out" onclick="closeModal()">Cancelar</button>
+    </div>`;
+}
+function saveContactoField(campo){
+  if(!DATA.contacto) DATA.contacto={};
+  DATA.contacto[campo]=document.getElementById('ct-val').value.trim();
+  save(); renderContacto(); closeModal(); toast('Contacto actualizado');
+}
+function addRedRow(n){
+  window._redesCount=n+1;
+  const d=document.createElement('div');
+  d.className='fr2'; d.style.marginBottom='8px'; d.style.gap='8px';
+  d.innerHTML=`<input class="fi" id="rs-icon-${n}" placeholder="Emoji"/>
+    <input class="fi" id="rs-label-${n}" placeholder="Nombre"/>
+    <input class="fi" id="rs-url-${n}" placeholder="URL" style="grid-column:1/-1"/>`;
+  document.getElementById('redes-list').appendChild(d);
+}
+function saveRedes(n){
+  const count=window._redesCount||n;
+  const redes=[];
+  for(let i=0;i<count;i++){
+    const icon=(document.getElementById('rs-icon-'+i)?.value||'').trim();
+    const label=(document.getElementById('rs-label-'+i)?.value||'').trim();
+    const url=(document.getElementById('rs-url-'+i)?.value||'').trim();
+    if(label) redes.push({icon:icon||'🔗',label,url:url||'#'});
+  }
+  if(!DATA.contacto) DATA.contacto={};
+  DATA.contacto.redes=redes;
+  save(); renderContacto(); closeModal(); toast('Redes actualizadas');
+}
+
+function sendContactForm(){
+  const n=document.getElementById('cf-nombre').value.trim();
+  const e=document.getElementById('cf-correo').value.trim();
+  const m=document.getElementById('cf-mensaje').value.trim();
+  if(!n||!e||!m){toast('Completa todos los campos','err');return;}
+  // Simulate send
+  document.getElementById('cf-nombre').value='';
+  document.getElementById('cf-correo').value='';
+  document.getElementById('cf-mensaje').value='';
+  toast('Mensaje enviado. ¡Nos contactaremos pronto!');
+}
+
+// ══════════════════════════════════════════
+//  MODAL HELPERS
+// ══════════════════════════════════════════
+function createModal(title){
+  closeModal();
+  const bg=document.createElement('div');
+  bg.className='modal-bg'; bg.id='modal-bg';
+  bg.onclick=e=>{if(e.target===bg)closeModal();};
+  const m=document.createElement('div');
+  m.className='modal';
+  m.innerHTML=`<div class="modal-title">${title}<button class="modal-close" onclick="closeModal()">✕</button></div>`;
+  bg.appendChild(m);
+  document.getElementById('modal-root').appendChild(bg);
+  setTimeout(()=>m.querySelector('input,textarea')?.focus(),100);
+  return m;
+}
+function closeModal(){
+  document.getElementById('modal-bg')?.remove();
+}
+
+// ══════════════════════════════════════════
+//  EXPORT / IMPORT
+// ══════════════════════════════════════════
+function exportData(){
+  const blob=new Blob([JSON.stringify(DATA,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='solem-data-'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+  toast('Datos exportados');
+}
+function importData(input){
+  const file=input.files[0]; if(!file) return;
+  const r=new FileReader(); r.onload=e=>{
+    try{
+      DATA=JSON.parse(e.target.result);
+      save(); renderAll(); closeAdmin(); toast('Datos importados correctamente');
+    }catch{toast('Error al importar','err');}
+  }; r.readAsText(file);
+}
+
+// ══════════════════════════════════════════
+//  SCROLL ANIMATIONS
+// ══════════════════════════════════════════
+function initScrollAnim(){
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
+  },{threshold:.12});
+  document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+}
+
+// ══════════════════════════════════════════
+//  NAVBAR SCROLL EFFECT
+// ══════════════════════════════════════════
+window.addEventListener('scroll',()=>{
+  const nav=document.getElementById('navbar');
+  nav.style.background=window.scrollY>50?'rgba(10,6,4,.97)':'rgba(10,6,4,.9)';
+});
+
+// ══════════════════════════════════════════
+//  RENDER ALL
+// ══════════════════════════════════════════
+function renderAll(){
+  renderHero();
+  renderNosotros();
+  renderCatalog();
+  renderColecciones();
+  renderBeneficios();
+  renderTestimonios();
+  renderContacto();
+}
+
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', ()=>{
+  loadData();
+  renderAll();
+  initScrollAnim();
+  // Re-observe on re-render
+  setTimeout(initScrollAnim, 200);
+});
+</script>
+</body>
+</html>
